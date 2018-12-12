@@ -46,7 +46,7 @@ spec:
 {{ toYaml .Values.nodeSelector | indent 8 }}
     {{- end }}
     {{- if .Values.enabledRBAC }}
-      serviceAccountName: {{ .Values.serviceAccountName }}
+      serviceAccountName: {{ template "app.fullname" . }}
     {{- end }}
     {{- if .Values.tolerations }}
       tolerations:
