@@ -56,3 +56,51 @@
 {{- $name := include "app.name" . -}}
 {{- printf "%s-auth-%s" $name .Release.Name -}}
 {{- end -}}
+
+{{- define "serviceMonitor.namespace.selector" -}}
+{{- $root := . -}}
+{{- $yamls := dict -}}
+{{- $selector := .Values.serviceMonitorNamespaceSelector -}}
+{{- $expersion := default list (index $selector "matchExpressions") -}}
+{{- if eq .Values.level "project" -}}
+{{- $projectContent := dict -}}
+{{- $_ := set $projectContent "key" "field.cattle.io/projectId" -}}
+{{- $_ := set $projectContent "operator" "In" -}}
+{{- $_ := set $projectContent "values" (list .Values.global.projectName) -}}
+{{- $_ := set $selector "matchExpressions"  (append $expersion $projectContent) -}}
+{{- end -}}
+{{- $_ := set $yamls "serviceMonitorNamespaceSelector" $selector -}}
+{{- toYaml $yamls | indent 2 -}}
+{{- end -}}
+
+{{- define "rule.namespace.selector" -}}
+{{- $root := . -}}
+{{- $yamls := dict -}}
+{{- $selector := .Values.ruleNamespaceSelector -}}
+{{- $expersion := default list (index $selector "matchExpressions") -}}
+{{- if eq .Values.level "project" -}}
+{{- $projectContent := dict -}}
+{{- $_ := set $projectContent "key" "field.cattle.io/projectId" -}}
+{{- $_ := set $projectContent "operator" "In" -}}
+{{- $_ := set $projectContent "values" (list .Values.global.projectName) -}}
+{{- $_ := set $selector "matchExpressions"  (append $expersion $projectContent) -}}
+{{- end -}}
+{{- $_ := set $yamls "ruleNamespaceSelector" $selector -}}
+{{- toYaml $yamls | indent 2 -}}
+{{- end -}}
+
+{{- define "rule.selector" -}}
+{{- $root := . -}}
+{{- $yamls := dict -}}
+{{- $selector := .Values.ruleSelector -}}
+{{- $expersion := default list (index $selector "matchExpressions") -}}
+{{- if eq .Values.level "project" -}}
+{{- $projectContent := dict -}}
+{{- $_ := set $projectContent "key" "source" -}}
+{{- $_ := set $projectContent "operator" "In" -}}
+{{- $_ := set $projectContent "values" (list "rancher-alert") -}}
+{{- $_ := set $selector "matchExpressions"  (append $expersion $projectContent) -}}
+{{- end -}}
+{{- $_ := set $yamls "ruleSelector" $selector -}}
+{{- toYaml $yamls | indent 2 -}}
+{{- end }}

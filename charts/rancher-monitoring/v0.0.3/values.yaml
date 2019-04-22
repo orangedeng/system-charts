@@ -343,9 +343,18 @@ prometheus:
     mode: "remote"
     path: "/api/v1/read"
     target: ""
+  project:
+    alertManagerTarget: ""
+    projectDisplayName: ""
+    clusterDisplayName: ""
+  cluster:
+    alertManagerNamespace: ""
 
 global:
   systemDefaultRegistry: ""
   ## Rancher injected ServiceAccount
   ##
-  rancherInjectedServiceAccountName: ""
+  # rancherInjectedServiceAccountName: ""
+  serviceAccountName: ""
+  clusterName: ""
+  projectName: ""

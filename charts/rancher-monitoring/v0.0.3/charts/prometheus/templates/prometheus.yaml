@@ -91,14 +91,19 @@ spec:
 {{- else if not (include "additional-alertmanager-configs.yaml" .) }}
   alerting:
     alertmanagers:
-      - namespace: {{ .Release.Namespace }}
+      - namespace: {{ .Values.cluster.alertManagerNamespace }}
         name: alertmanager-operated
         port: http
 {{- end }}
   baseImage: {{ template "system_default_registry" . }}{{ .Values.image.repository }}
-{{- if .Values.externalLabels }}
+{{- if or (.Values.externalLabels) (eq .Values.level "project") }}
   externalLabels:
-{{ toYaml .Values.externalLabels | indent 4}}
+{{- if and (eq .Values.level "project") }}
+    prometheus_from: {{ .Values.global.clusterName }}
+{{- end }}
+{{- range $key, $value := .Values.externalLabels}}
+    {{ $key }}: {{ $value | quote }}
+{{- end }}
 {{- end }}
   nodeSelector:
     beta.kubernetes.io/os: linux
@@ -125,13 +130,10 @@ spec:
 {{ toYaml .Values.secrets | indent 2 }}
 {{- end }}
 {{- if .Values.enabledRBAC }}
-  serviceAccountName: {{ default (default (include "app.fullname" .) .Values.serviceAccountNameOverride) .Values.global.rancherInjectedServiceAccountName }}
+  serviceAccountName: {{ default (default (include "app.fullname" .) .Values.serviceAccountNameOverride) .Values.global.serviceAccountName }}
 {{- end }}
-{{- if .Values.serviceMonitorNamespaceSelector }}
-  serviceMonitorNamespaceSelector:
-{{ toYaml .Values.serviceMonitorNamespaceSelector | indent 4 }}
-{{- end }}
-{{- if .Values.serviceMonitorSelector }}
+{{ template "serviceMonitor.namespace.selector" . }}
+{{- if or (.Values.serviceMonitorSelector) (eq .Values.level "project") }}
   serviceMonitorSelector:
 {{ toYaml .Values.serviceMonitorSelector | indent 4 }}
 {{- end }}
@@ -140,14 +142,8 @@ spec:
   - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
     url: {{ printf "%s%s" .Values.sync.target .Values.sync.path }}
 {{- end }}
-{{- if .Values.ruleNamespaceSelector }}
-  ruleNamespaceSelector:
-{{ toYaml .Values.ruleNamespaceSelector | indent 4 }}
-{{- end }}
-{{- if .Values.ruleSelector }}
-  ruleSelector:
-{{ toYaml .Values.ruleSelector | indent 4 }}
-{{- end }}
+{{ template "rule.namespace.selector" . }}
+{{ template "rule.selector" . }}
 {{- if or .Values.storageSpec .Values.persistence.enabled }}
   storage:
     volumeClaimTemplate:
