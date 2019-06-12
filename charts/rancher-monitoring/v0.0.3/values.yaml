@@ -1,3 +1,4 @@
+enabled: false
 operator:
   nameOverride: "prometheus-operator"
   enabledRBAC: true
