@@ -49,6 +49,11 @@ dependencies:
     condition: exporter-node.enabled
     repository: "file://./charts/exporter-node/"
 
+  - name: exporter-blackbox
+    version: 0.0.1
+    condition: exporter-blackbox.enabled
+    repository: "file://./charts/exporter-blackbox/"
+
   - name: grafana
     version: 0.0.1
     condition: grafana.enabled

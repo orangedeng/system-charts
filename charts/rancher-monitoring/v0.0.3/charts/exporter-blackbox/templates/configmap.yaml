@@ -1,0 +1,14 @@
+{{- if .Values.config }}
+apiVersion: v1
+kind: {{ if .Values.secretConfig -}} Secret {{- else -}} ConfigMap {{- end }}
+metadata:
+  name: {{ template "app.fullname" . }}
+  labels:
+    app: {{ template "app.name" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    chart: {{ template "app.version" . }}
+{{ if .Values.secretConfig -}} stringData: {{- else -}} data: {{- end }}
+  blackbox.yaml: |
+{{ toYaml .Values.config | indent 4 }}
+{{- end }}

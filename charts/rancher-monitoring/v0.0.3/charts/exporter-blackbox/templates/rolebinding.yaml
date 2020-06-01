@@ -1,0 +1,18 @@
+{{- if .Values.pspEnabled }}
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  labels:
+    app: {{ template "app.name" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    chart: {{ template "app.version" . }}
+  name: {{ template "app.fullname" . }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ template "app.fullname" . }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ default (include "app.fullname" .) .Values.serviceAccountName }}
+{{- end -}}

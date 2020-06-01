@@ -183,6 +183,19 @@ exporter-kube-state:
   serviceAccountName: ""
   securityContext: {}
 
+exporter-blackbox:
+  enabled: true
+  image:
+    repository: clcos/prom-blackbox-exporter
+    tag: v0.16.0
+  resources:
+    limits:
+      cpu: 200m
+      memory: 100Mi
+    requests:
+      cpu: 100m
+      memory: 50Mi
+
 alertmanager:
   enabled: false
   apiGroup: "monitoring.coreos.com"
@@ -351,6 +364,7 @@ prometheus:
     clusterDisplayName: ""
   cluster:
     alertManagerNamespace: ""
+
 
 global:
   systemDefaultRegistry: ""
