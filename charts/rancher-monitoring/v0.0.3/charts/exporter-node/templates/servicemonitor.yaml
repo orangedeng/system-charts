@@ -1,3 +1,4 @@
+{{- if .Values.enabledServiceMonitor }}
 apiVersion: {{ template "operator_api_version" . }}
 kind: ServiceMonitor
 metadata:
@@ -33,3 +34,4 @@ spec:
       action: replace
       regex: (.+)
       replacement: $1
+{{- end }} 
